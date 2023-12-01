@@ -33,12 +33,12 @@ Route.get('/favoritos', async () => {
   return [{ id: 1, nome: 'google', url: 'hhtp://www.google.com', importante: true }]
 })
 
-Route.get('/favoritos/:id', async ({ params }) => {
+Route.get('/favoritos/:id', async ({ params, response }) => {
   //retornar o objeto caso exista, senão retornar objeto vazio {}
   //função callback:
   let favoritoEncontrado = favoritos.find((favorito) => favorito.id == params.id)
   if favoritoEncontrado==undefined
-    return{msg:'favorito nao encontrado'}
+    return response.status(404)
   return favoritoEncontrado
 })
 // proxima aula: carry string
@@ -47,4 +47,13 @@ Route.get('/favoritos/:id', async ({ params }) => {
 Route.get('/favoritos/:nome', async ({ params }) => {
   let favoritoEncontrado = favoritos.find((favorito) => favorito.nome == params.nome)
   return { id: 1, nome: params.nome, url: 'hhtp://www.google.com', importante: true }
+})
+
+
+//rota post para criar um novo favorito
+Route.post('/favoritos', async ({request, response}) => {
+  const{nome, url, importante} = request.body()
+  const newFavorito = {id:favoritos.length+1, nome, url, importante}
+  favoritos.push(newFavorito)
+  return response.status(201).send(newFavorito)
 })
