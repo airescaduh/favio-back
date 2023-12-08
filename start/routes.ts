@@ -39,9 +39,9 @@ Route.get('/favoritos/:id', async ({ params, response }) => {
   let favoritoEncontrado = favoritos.find((favorito) => favorito.id == params.id)
   if favoritoEncontrado==undefined
     return response.status(404)
-  return favoritoEncontrado
+  return favoritoEncontrado 
 })
-// proxima aula: carry string
+// proxima aula: carry string, é isso
 
 //procurar favorito pelo nome
 Route.get('/favoritos/:nome', async ({ params }) => {
@@ -53,6 +53,7 @@ Route.get('/favoritos/:nome', async ({ params }) => {
 //rota post para criar um novo favorito
 Route.post('/favoritos', async ({request, response}) => {
   const{nome, url, importante} = request.body()
+  if(nome==undefined|| url==undefined || importante==undefined) return response.status(400)
   const newFavorito = {id:favoritos.length+1, nome, url, importante}
   favoritos.push(newFavorito)
   return response.status(201).send(newFavorito)
