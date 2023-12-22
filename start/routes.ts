@@ -87,3 +87,23 @@ Route.delete('/favoritos/inexistente/:id', async ({ params, response }) => {
 
   return response.status(404).send(deletedFavorito)
 })
+
+// Rota PUT para editar um favorito existente
+Route.put('/favoritos/:id', async ({ params, request, response }) => {
+  const favoritoId = parseInt(params.id, 10)
+  const index = favoritos.findIndex((favorito) => favorito.id === favoritoId)
+  
+  if (index === -1) {
+    return response.status(404).send({ mensagem: 'Favorito não encontrado' })
+  }
+
+  const { nome, url, importante } = request.body()
+  if (nome == undefined || url == undefined || importante == undefined) {
+    return response.status(400).send({ mensagem: 'Parâmetros inválidos' })
+  }
+
+  // Atualizar o favorito no array
+  favoritos[index] = { id: favoritoId, nome, url, importante }
+  
+  return response.status(200).send(favoritos[index])
+})
