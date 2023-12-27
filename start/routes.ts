@@ -99,3 +99,7 @@ Route.put('/favoritos/:id', async ({ params, request, response }) => {
 
   return response.status(200).send(favoritos[index])
 })
+
+Route.resource('favoritao', 'FavoritosController').apiOnly()
+
+Route.resource('users', 'UsersController').apiOnly()

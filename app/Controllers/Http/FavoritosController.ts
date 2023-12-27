@@ -8,14 +8,14 @@ export default class FavoritosController {
 
   public async store({ request, response }: HttpContextContract) {
     try {
-      const { nome, cpf, senha, url, importante } = request.body()
+      const { nome, url, importante } = request.body()
 
       // Verificar se campos obrigatórios estão presentes
-      if (!nome || !cpf || !senha || !url || importante === undefined) {
+      if (!nome || !url || importante === undefined) {
         return response.status(400).send({ mensagem: 'Campos obrigatórios não preenchidos' })
       }
 
-      const newFavorito = await Favorito.create({ nome, cpf, senha, url, importante })
+      const newFavorito = await Favorito.create({ nome, url, importante })
       return response.status(201).send(newFavorito)
     } catch (error) {
       return response.status(500).send({ mensagem: 'Erro ao criar favorito', error: error.message })
@@ -37,8 +37,6 @@ export default class FavoritosController {
     if (!favoritoEncontrado) return response.status(404)
 
     favoritoEncontrado.nome = nome
-    favoritoEncontrado.cpf = cpf
-    favoritoEncontrado.senha = senha
     favoritoEncontrado.url = url
     favoritoEncontrado.importante = importante
 
