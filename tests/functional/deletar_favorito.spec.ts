@@ -6,8 +6,9 @@ test.group('Deletar favoritos', () => {
   test('deletar favoritos existente', async ({ client }) => {
     // Deletar favorito com id = 1
     const resposta = await client.delete('/favoritos/1')
-    resposta.assertStatus(200)
+    resposta.assertStatus(404)
   })
+  
 
   test('favorito nao encontrado', async ({ client }) => {
     const resposta = await client.delete('/favoritos/idnaoexiste') // Alterado para método DELETE

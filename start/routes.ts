@@ -33,77 +33,69 @@ Route.get('/favoritos', async () => {
   return [{ id: 1, nome: 'google', url: 'http://www.google.com', importante: true }]
 })
 
-// Procurar favorito pelo ID
 Route.get('/favoritos/:id', async ({ params, response }) => {
-  let favoritoEncontrado = favoritos.find((favorito) => favorito.id == params.id)
-  if (favoritoEncontrado == undefined) {
-    return response.status(404).send({ mensagem: 'Favorito não encontrado' })
-  }
-  return favoritoEncontrado
-})
-
-// Procurar favorito pelo nome
-Route.get('/favoritos/nome/:nome', async ({ params, response }) => {
-  let favoritoEncontrado = favoritos.find((favorito) => favorito.nome == params.nome)
+  const favoritoEncontrado = favoritos.find((favorito) => favorito.id === params.id)
   if (!favoritoEncontrado) {
     return response.status(404).send({ mensagem: 'Favorito não encontrado' })
   }
   return favoritoEncontrado
 })
 
-// Rota POST para criar um novo favorito
+Route.get('/favoritos/nome/:nome', async ({ params, response }) => {
+  const favoritoEncontrado = favoritos.find((favorito) => favorito.nome === params.nome)
+  if (!favoritoEncontrado) {
+    return response.status(404).send({ mensagem: 'Favorito não encontrado' })
+  }
+  return favoritoEncontrado
+})
+
 Route.post('/favoritos', async ({ request, response }) => {
   const { nome, url, importante } = request.body()
-  if (nome == undefined || url == undefined || importante == undefined) {
-    return response.status(400)
+  if (!nome || !url || importante === undefined) {
+    return response.status(400).send({ mensagem: 'Parâmetros inválidos' })
   }
   const newFavorito = { id: favoritos.length + 1, nome, url, importante }
   favoritos.push(newFavorito)
   return response.status(201).send(newFavorito)
 })
 
-// Rota DELETE para deletar um favorito existente
 Route.delete('/favoritos/:id', async ({ params, response }) => {
-  const favoritoId = parseInt(params.id, 10)
+  const favoritoId = params.id as number
   const index = favoritos.findIndex((favorito) => favorito.id === favoritoId)
   if (index === -1) {
     return response.status(404).send({ mensagem: 'Favorito não encontrado' })
   }
   // Remover o favorito do array
-  const deletedFavorito = favoritos.splice(index, 1)[0]
-
-  return response.status(200).send(deletedFavorito)
+  favoritos.splice(index, 1)
+  return response.status(204)
 })
 
-// Rota DELETE para deletar um favorito que não existe
 Route.delete('/favoritos/inexistente/:id', async ({ params, response }) => {
-  const favoritoId = parseInt(params.id, 10)
+  const favoritoId = params.id as number
   const index = favoritos.findIndex((favorito) => favorito.id === favoritoId)
   if (index === -1) {
     return response.status(404).send({ mensagem: 'Favorito não encontrado para deletar' })
   }
   // Remover o favorito do array
   const deletedFavorito = favoritos.splice(index, 1)[0]
-
-  return response.status(404).send(deletedFavorito)
+  return response.status(200).send(deletedFavorito)
 })
 
-// Rota PUT para editar um favorito existente
 Route.put('/favoritos/:id', async ({ params, request, response }) => {
-  const favoritoId = parseInt(params.id, 10)
+  const favoritoId = params.id as number
   const index = favoritos.findIndex((favorito) => favorito.id === favoritoId)
-  
+
   if (index === -1) {
     return response.status(404).send({ mensagem: 'Favorito não encontrado' })
   }
 
   const { nome, url, importante } = request.body()
-  if (nome == undefined || url == undefined || importante == undefined) {
+  if (!nome || !url || importante === undefined) {
     return response.status(400).send({ mensagem: 'Parâmetros inválidos' })
   }
 
   // Atualizar o favorito no array
   favoritos[index] = { id: favoritoId, nome, url, importante }
-  
+
   return response.status(200).send(favoritos[index])
 })

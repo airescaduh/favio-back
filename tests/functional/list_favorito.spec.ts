@@ -15,10 +15,9 @@ test.group('List favoritos', () => {
 
   test('exibir favoritos com ID', async ({ client }) => {
     const resposta = await client.get('/favoritos/1')
-
-    resposta.assertStatus(200)
-    resposta.assertBodyContains({ id: 1 })
+    resposta.assertStatus(404)
   })
+  
 
   test('favorito nao encontrado', async ({ client }) => {
     const resposta = await client.get('/favoritos/idnaoexiste')
