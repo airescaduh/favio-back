@@ -1,23 +1,36 @@
+import { BaseModel, column, beforeSave } from '@ioc:Adonis/Lucid/Orm'
+import Hash from '@ioc:Adonis/Core/Hash'
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 
 export default class Favorito extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public name: string
+  public nome: string
+
+  @column()
+  public cpf: string
+
+  @column()
+  public senha: string
 
   @column()
   public url: string
 
   @column()
-  public importante: boolean  
+  public importante: boolean
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
-  nome: any
+
+  @beforeSave()
+  public static async hashPassword(favorito: Favorito) {
+    if (favorito.$dirty.senha) {
+      favorito.senha = await Hash.make(favorito.senha)
+    }
+  }
 }

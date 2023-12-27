@@ -1,6 +1,5 @@
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Favorito from 'App/Models/Favorito'
-import { DateTime } from 'luxon'
 
 export default class FavoritosController {
   public async index({}: HttpContextContract) {
@@ -9,14 +8,14 @@ export default class FavoritosController {
 
   public async store({ request, response }: HttpContextContract) {
     try {
-      const { nome, url, importante } = request.body()
+      const { nome, cpf, senha, url, importante } = request.body()
 
       // Verificar se campos obrigatórios estão presentes
-      if (!nome || !url || importante === undefined) {
+      if (!nome || !cpf || !senha || !url || importante === undefined) {
         return response.status(400).send({ mensagem: 'Campos obrigatórios não preenchidos' })
       }
 
-      const newFavorito = await Favorito.create({ nome, url, importante })
+      const newFavorito = await Favorito.create({ nome, cpf, senha, url, importante })
       return response.status(201).send(newFavorito)
     } catch (error) {
       return response.status(500).send({ mensagem: 'Erro ao criar favorito', error: error.message })
@@ -33,15 +32,17 @@ export default class FavoritosController {
   }
 
   public async update({ request, params, response }: HttpContextContract) {
-    const { nome, url, importante } = request.body()
+    const { nome, cpf, senha, url, importante } = request.body()
     let favoritoEncontrado = await Favorito.findByOrFail('id', params.id)
     if (!favoritoEncontrado) return response.status(404)
 
     favoritoEncontrado.nome = nome
+    favoritoEncontrado.cpf = cpf
+    favoritoEncontrado.senha = senha
     favoritoEncontrado.url = url
     favoritoEncontrado.importante = importante
 
-    await favoritoEncontrado.merge({ updatedAt: DateTime.local() }).save()
+    await favoritoEncontrado.save()
     return response.status(200).send(favoritoEncontrado)
   }
 
